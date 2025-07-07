@@ -1,8 +1,8 @@
 *
 
 
-! Hardware/
-! User/
+!Hardware/
+!User/
 !empty.c
 !empty.syscfg
 !.gitignore

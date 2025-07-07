@@ -1,5 +1,5 @@
 #include "key.h"
-
+uint8_t key_value = 0;
 void Key_Init()
 {
     //清除定时器中断标志
@@ -65,4 +65,19 @@ uint8_t Key_output(void)
     }
 
     return key_num;
+}
+
+void TIMER_Key_INST_IRQHandler(void)
+{
+
+    if(DL_TimerA_getPendingInterrupt(TIMER_Key_INST)==DL_TIMER_IIDX_ZERO) {
+        key_value = Key_output();
+        if(key_value == 1){
+            DL_GPIO_setPins(LED_PORT,LED_PIN_PIN);
+        }
+        else if(key_value == 11)
+        {
+            DL_GPIO_clearPins(LED_PORT,LED_PIN_PIN);
+        }
+    }
 }

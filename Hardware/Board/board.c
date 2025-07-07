@@ -6,6 +6,11 @@
 #include "board.h"
 #include "ti/driverlib/m0p/dl_core.h"
 
+void Uart0_init()
+{
+    NVIC_ClearPendingIRQ(UART_0_INST_INT_IRQN);
+    NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
+}
 
 static void uart0_sendChar(uint8_t dat)
 {

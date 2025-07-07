@@ -39,43 +39,35 @@
 #include "oled_hardware_i2c.h"
 #include "clock.h"
 #include "stdio.h"
-uint8_t oled_buffer[16];
-uint8_t key_value = 0;
+#include "SHOW.h"
+#include "mpu6050.h"
+
 uint16_t dis = 0;
 int main(void)
 {
     SYSCFG_DL_init();
-    // jy61pInit();
+    //jy61pInit();
     SysTick_Init();
-    Key_Init();
-    OLED_Init();
+    //Key_Init();//按键使能(先看start timer开了没)
+    OLED_Init();//oled使能（未连接时需注释）
+    Uart0_init();//usb串口打印使能
+    MPU6050_Init();//MPU使能
+    
     NVIC_ClearPendingIRQ(TIMER_1_INST_INT_IRQN);
     NVIC_EnableIRQ(TIMER_1_INST_INT_IRQN);
 
     while (1) 
     {  
-    }
-}
-void TIMER_Key_INST_IRQHandler(void)
-{
 
-    if(DL_TimerA_getPendingInterrupt(TIMER_Key_INST)==DL_TIMER_IIDX_ZERO) {
-        key_value = Key_output();
-        if(key_value == 1){
-            DL_GPIO_setPins(LED_PORT,LED_PIN_PIN);
-        }
-        else if(key_value == 11)
-        {
-            DL_GPIO_clearPins(LED_PORT,LED_PIN_PIN);
-        }
     }
 }
+
 
 void TIMER_1_INST_IRQHandler(void)
 {
     if(DL_TimerA_getPendingInterrupt(TIMER_1_INST)==DL_TIMER_IIDX_ZERO) 
-    {
-
+    {   
+        SHOW_Firstpage (dis, pitch, roll, yaw);
     }
 
 }
