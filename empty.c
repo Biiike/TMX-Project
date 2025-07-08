@@ -3,7 +3,6 @@
 #include "ti/driverlib/dl_gpio.h"
 #include "ti/driverlib/dl_timer.h"
 #include "board.h"
-#include "bsp_gyro.h"
 #include "key.h"
 #include "usound.h"
 #include "oled_hardware_i2c.h"
