@@ -124,6 +124,7 @@ void MPU6050_Init(void)
 {
     NVIC_ClearPendingIRQ(TIMER_Gyro_INST_INT_IRQN);
     NVIC_EnableIRQ(TIMER_Gyro_INST_INT_IRQN);
+    
     int result;
     unsigned char accel_fsr;
     unsigned short gyro_rate, gyro_fsr;
