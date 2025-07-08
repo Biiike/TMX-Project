@@ -1,8 +1,10 @@
 *
 
 
-!Hardware/
+!Hardware/MPU6050
+!Hardware/*
 !User/
+!User/*
 !empty.c
 !empty.syscfg
 !.gitignore

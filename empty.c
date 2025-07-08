@@ -12,6 +12,7 @@
 #include "SHOW.h"
 #include "mpu6050.h"
 #include "wit.h"
+#include "MOTOR.h"
 
 uint16_t dis = 0;
 int main(void)
