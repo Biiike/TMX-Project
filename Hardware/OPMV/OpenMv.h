@@ -1,6 +1,7 @@
 #ifndef	__OPENMV_H__
 #define __OPENMV_H__
 #include "board.h"
+#include "OpenMv Light.h"
 #define USART_RECEIVE_LENGTH    6
 #define PACKET_HEADER   0xAA
 #define PACKET_FOOTER   0x55
