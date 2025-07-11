@@ -15,10 +15,7 @@
 //[6]0 1 2 3 ... 127	
 //[7]0 1 2 3 ... 127
 
-void SysTick_Handler(void)
-{
-    tick_ms++;
-}
+
 void delay_ms_oled(uint32_t ms)
 {
     mspm0_delay_ms(ms);

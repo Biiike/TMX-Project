@@ -2,7 +2,6 @@
 #include "OpenMv Light.h"
 uint8_t current_duty = 0;
 
-
 void send_duty_cycle_command(UART_Regs *uart_instance, uint8_t duty_cycle) {
 
     if (duty_cycle > 100) {

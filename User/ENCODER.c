@@ -12,7 +12,7 @@ volatile uint32_t gpiob_flag;
 
 void encoder_init(void)
 {
-    NVIC_ClearPendingIRQ(MOTOR_INT_IRQN);//
+    NVIC_ClearPendingIRQ(MOTOR_INT_IRQN);
     NVIC_EnableIRQ(MOTOR_INT_IRQN);
 }
 

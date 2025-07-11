@@ -24,3 +24,8 @@ void SysTick_Init(void)
     DL_SYSTICK_config(CPUCLK_FREQ/1000);
     NVIC_SetPriority(SysTick_IRQn, 0);
 }
+
+void SysTick_Handler(void)
+{
+    tick_ms++;
+}

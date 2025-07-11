@@ -18,6 +18,7 @@
  *     9. Set the pin according to your needs.
  */
 
+
 #ifndef _MPU6050_H_
 #define _MPU6050_H_
 
