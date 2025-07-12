@@ -50,13 +50,13 @@ void TIMER_1_INST_IRQHandler(void)
         //lc_printf("pitch:%.2f, roll:%.2f, yaw:%.2f\n",wit_data.pitch,wit_data.roll,wit_data.yaw);
         //lc_printf("Color:%d\n",OpenMv_Buff[1]);
         //SHOW_Firstpage (dis, wit_data.pitch, wit_data.roll, wit_data.yaw);
-
+        set_motor_pwm(-1000,-1000);
         encoder_update();
         ct1 = get_encoder_cnt1();
         ct2 = get_encoder_cnt2();
         encoder_Rst();
         SHOW_Thirdpage(ct1,ct2);
-        lc_printf("ct1:%.d, ct2:%.d\n",ct1,ct2);
+        lc_printf("ct1 ct2:%.d,%.d\n",ct1,ct2);
 
     }
 }
