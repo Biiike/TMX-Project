@@ -12,8 +12,8 @@ volatile uint32_t gpiob_flag;
 
 void encoder_init(void)
 {
-    NVIC_ClearPendingIRQ(MOTOR_INT_IRQN);
-    NVIC_EnableIRQ(MOTOR_INT_IRQN);
+    NVIC_ClearPendingIRQ(GPIOA_INT_IRQn);
+    NVIC_EnableIRQ(GPIOA_INT_IRQn);
 }
 
 int get_encoder_cnt1(void)
@@ -92,4 +92,5 @@ void GROUP1_IRQHandler(void)
     }
 
     DL_GPIO_clearInterruptStatus(GPIOA,MOTOR_E2B_PIN|MOTOR_E2A_PIN|MOTOR_E1A_PIN|MOTOR_E1B_PIN);
+    
 }
