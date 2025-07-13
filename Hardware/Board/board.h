@@ -39,5 +39,4 @@ void delay_ms(int __ms);
 void delay_1us(int __us);
 void delay_1ms(int __ms);
 
-void Uart0_init();
 #endif
