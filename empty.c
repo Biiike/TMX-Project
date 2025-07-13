@@ -48,7 +48,6 @@ int main(void)
     while (1) 
     {  
 
-        //set_motor_pwm(-1000,-1000);//左 右
     }
 }
 
@@ -67,18 +66,20 @@ void TIMER_1_INST_IRQHandler(void)
         // encoder_Rst();
          //SHOW_Thirdpage(ct1,ct2);
          //lc_printf("ct1 ct2:%.d,%.d\n",ct1,ct2);
-         //lc_printf("ct2 ct1:%d,%d\r\n",ct2,ct1);
-          PID_Parser_Process();
+         lc_printf("%d,%d,%1.f,%d\r\n",ct2,ct1,target_calcu,pwm);
+         PID_Parser_Process();
+            
     }
 }
 void Pid_pro(void)
 {
-    int pwm1,pwm2;
     encoder_update();
     ct1 = get_encoder_cnt1();
     ct2 = get_encoder_cnt2();
     encoder_Rst();
-    measure = (ct1 + ct2) / 2;
+    cnt1 = (float)ct1/2;
+    cnt2 = (float)ct2/2;
+    measure = cnt1 + cnt2;
     pwm = (int)velocity_PID_value_new(measure, target_calcu);
     set_motor_pwm(pwm,pwm);
 }

@@ -23,16 +23,16 @@ void pwm_limit(int *a,int max)
 
 void set_motor1_pwm(int Compare)
 {
-    pwm_limit(&Compare, 7000);
+    pwm_limit(&Compare, 4800);
     ABS_pwm(&Compare);
-    DL_TimerA_setCaptureCompareValue(PWM_Motor_INST, Compare, DL_TIMER_CC_1_INDEX);
+    DL_TimerA_setCaptureCompareValue(PWM_Motor_INST, Compare + 350, DL_TIMER_CC_1_INDEX);
 }
 
 void set_motor2_pwm(int Compare)
 {
-    pwm_limit(&Compare, 7000);
+    pwm_limit(&Compare, 4800);
     ABS_pwm(&Compare);
-    DL_TimerA_setCaptureCompareValue(PWM_Motor_INST, Compare, DL_TIMER_CC_0_INDEX);
+    DL_TimerA_setCaptureCompareValue(PWM_Motor_INST, Compare + 350, DL_TIMER_CC_0_INDEX);
 }
 
 void set_motor_pwm(int Compare1,int Compare2)

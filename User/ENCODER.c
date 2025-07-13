@@ -90,7 +90,5 @@ void GROUP1_IRQHandler(void)
             pre_encoder_cnt2++;
         }
     }
-
-    DL_GPIO_clearInterruptStatus(GPIOA,MOTOR_E2B_PIN|MOTOR_E2A_PIN|MOTOR_E1A_PIN|MOTOR_E1B_PIN);
-    
+    DL_GPIO_clearInterruptStatus(GPIOA,MOTOR_E2B_PIN|MOTOR_E2A_PIN|MOTOR_E1A_PIN|MOTOR_E1B_PIN);   
 }

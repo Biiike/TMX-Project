@@ -5,12 +5,9 @@
 #include <string.h>
 #include <stdio.h>
 
-
-
 volatile float VKp = 77.0;
 volatile float VKi = 3.5;
 volatile float VKd = 0;
-
 
 volatile float TKp = 0.0f;
 volatile float TKd = 0.0f;
