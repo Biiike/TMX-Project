@@ -57,13 +57,15 @@ float velocity_PID_value_new(float Encoder,float Target)
 //输入：角速度、角度值
 int Turn(float gyro_Z,int Target_turn)
 {
-	int temp;
-    int last_turn;
-    int err_turn;
-    err_turn = Target_turn;
-	temp=TKp*gyro_Z+TKd*(err_turn-last_turn);
-    last_turn=err_turn;
-	return temp;
+	float last_error = 0; 
+	float error;
+	float derivative;
+	int output;
+	error = Target_turn - gyro_Z; 
+	derivative = error - last_error;
+	output = TKp * error + TKd * derivative;
+	last_error = error; 
+	return output;
 }
 
 //I限幅：

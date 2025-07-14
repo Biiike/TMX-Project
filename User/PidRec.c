@@ -9,8 +9,8 @@ volatile float VKp = 77.0;
 volatile float VKi = 3.5;
 volatile float VKd = 0;
 
-volatile float TKp = 0.0f;
-volatile float TKd = 0.0f;
+volatile float TKp = -20;
+volatile float TKd = -10;
 
 #define RX_CMD_BUFFER_SIZE 32
 static char gRxCmdBuffer[RX_CMD_BUFFER_SIZE];

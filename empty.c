@@ -20,9 +20,13 @@
 uint16_t dis = 0;
 int ct1,ct2;
 float cnt1,cnt2;
-int pwm = 0;
 float measure;
-float target_calcu = 18;
+
+float target_calcu = 10;//默认前进速度
+float target_yaw = 0;//默认角度
+
+int turn_pwm = 0;
+int velocity_pwm = 0;
 
 int main(void)
 {
@@ -60,14 +64,10 @@ void TIMER_1_INST_IRQHandler(void)
         //lc_printf("pitch,roll,yaw:%.2f, %.2f, %.2f\n",wit_data.pitch,wit_data.roll,wit_data.yaw);
         //lc_printf("Color:%d\n",OpenMv_Buff[1]);
         //SHOW_Firstpage (dis, wit_data.pitch, wit_data.roll, wit_data.yaw);
-        // encoder_update();
-        // ct1 = get_encoder_cnt1();
-        // ct2 = get_encoder_cnt2();
-        // encoder_Rst();
-         //SHOW_Thirdpage(ct1,ct2);
-         //lc_printf("ct1 ct2:%.d,%.d\n",ct1,ct2);
-         lc_printf("%d,%d,%1.f,%d\r\n",ct2,ct1,target_calcu,pwm);
-         PID_Parser_Process();
+        //SHOW_Thirdpage(ct1,ct2);
+        //lc_printf("ct1 ct2:%.d,%.d\n",ct1,ct2);
+        //lc_printf("%d,%d,%1.f,%d\r\n",ct2,ct1,target_calcu,velocity_pwm);
+        //PID_Parser_Process();
             
     }
 }
@@ -80,8 +80,9 @@ void Pid_pro(void)
     cnt1 = (float)ct1/2;
     cnt2 = (float)ct2/2;
     measure = cnt1 + cnt2;
-    pwm = (int)velocity_PID_value_new(measure, target_calcu);
-    set_motor_pwm(pwm,pwm);
+    turn_pwm = Turn(wit_data.yaw, target_yaw);//转向环
+    velocity_pwm = (int)velocity_PID_value_new(measure, target_calcu);//速度环
+    set_motor_pwm(velocity_pwm + turn_pwm,velocity_pwm - turn_pwm);
 }
 void TIMER_Pid_INST_IRQHandler(void)
 {
