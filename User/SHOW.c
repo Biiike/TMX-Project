@@ -46,7 +46,7 @@ void SHOW_Firstpage (uint8_t Range, float pitch, float roll, float yaw)
   
     }
 
-    void SHOW_Fourpage(void)
+    void SHOW_Fourpage(uint8_t Range, float pitch, float roll)
     {
         OLED_ShowString(0,2,(uint8_t *)"target:",16);
         OLED_ShowString(0,4,(uint8_t *)" flag:",16);

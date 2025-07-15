@@ -74,7 +74,7 @@ int main(void)
 
     while (1) 
     {  
-        SHOW_Fourpage();
+        SHOW_Fourpage(target_angle, flag, Quan_num);
     }
 }
 float my_abs(float yaw)
