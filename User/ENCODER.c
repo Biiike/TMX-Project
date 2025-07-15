@@ -68,7 +68,7 @@ void GROUP1_IRQHandler(void)
             pre_encoder_cnt1--;
         }
     }
-    else if((gpio_flag&MOTOR_E2A_PIN)==MOTOR_E2A_PIN)//A2相上升沿
+    if((gpio_flag&MOTOR_E2A_PIN)==MOTOR_E2A_PIN)//A2相上升沿
     {
         if(!DL_GPIO_readPins(GPIOA,MOTOR_E2B_PIN))
         {

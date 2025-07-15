@@ -9,7 +9,7 @@ void SHOW_Firstpage (uint8_t Range, float pitch, float roll, float yaw)
     OLED_ShowString(0,2,(uint8_t *)"Pitch:",16);
     OLED_ShowString(0,4,(uint8_t *)" Roll:",16);
     OLED_ShowString(0,6,(uint8_t *)"  Yaw:",16);
-    OLED_ShowString(0,0,(uint8_t *)"Range:",16);
+    OLED_ShowString(0,0,(uint8_t *)"Quan:",16);
     sprintf((char *)oled_buffer, "%6.1f", pitch);
     OLED_ShowString(7*8,2,oled_buffer,16);
     sprintf((char *)oled_buffer, "%6.1f", roll);

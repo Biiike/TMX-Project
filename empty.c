@@ -16,26 +16,43 @@
 #include "ENCODER.h" 
 #include "CONTROL.h"
 #include "PidRec.h"
+#include "FindLine.h"
+#include "Beep.h"
 
+#define Black_Cnt1    10
+#define White_CNt1    80
+#define Base_Speed1    20    //基础速度
+#define Base_Speed2    10    //基础速度
 uint16_t dis = 0;
 int ct1,ct2;
 float cnt1,cnt2;
 float measure;
-
-float target_calcu = 10;//默认前进速度
+uint8_t key_value = 0;
+float target_calcu = 0;//默认前进速度
+float target_A = 0;
+float target_B = 0;
 float target_yaw = 0;//默认角度
-
-int turn_pwm = 0;
-int velocity_pwm = 0;
-
+uint8_t Find_flag = 0;
+uint8_t Quan_num = 0;
+int turn_value = 0;
+int velocity_pwm_A = 0;
+int velocity_pwm_B = 0;
+uint8_t Beep_flag = 0;
+uint8_t Led_flag = 0;
+uint8_t Stop_flag = 0;
+uint8_t mode;
+uint8_t STOP;
+uint8_t EN_flag = 0;
+uint8_t White_flag = 0;
+uint8_t flag = 0;
 int main(void)
 {
     SYSCFG_DL_init();
     SysTick_Init();
     
     Key_Init();//按键使能(先看start timer开了没)
-    //OLED_Init();//oled使能（未连接时需注释）
-    Uart0_init();//usb串口打印使能
+    OLED_Init();//oled使能（未连接时需注释）
+    //Uart0_init();//usb串口打印使能
     //MPU6050_Init();//MPU使能,需要先配置 p10 p11 引脚
     WIT_Init();
     encoder_init();
@@ -51,11 +68,93 @@ int main(void)
 
     while (1) 
     {  
-
+        SHOW_Firstpage (Quan_num, wit_data.pitch, wit_data.roll, wit_data.yaw);
     }
 }
+float my_abs(float yaw)
+{
+    float Angle;
+    if(yaw < 0) Angle = -yaw;
+    else Angle = yaw;
 
-
+    return Angle;
+}
+uint8_t Lauch_Task(void)
+{
+    static int Cnt = 0;
+    if(mode == 1)
+    {
+        flag = 1;
+        if(!P1 || !P2 || !P3 || !P4 || !P5 || !P6 || !P7 || !P8)
+        {
+            Cnt ++;
+            if(Cnt > Black_Cnt1)
+            {
+                Cnt = 0;
+                Beep_flag = 1;
+                Led_flag = 1;
+                EN_flag = 0;
+                mode = 0;
+                return 1;
+            }
+        }
+        else {
+            Cnt = 0;
+        }
+    }
+    else if(mode == 2)
+    {
+        if(flag == 1)
+        {
+            if(!P1 || !P2 || !P3 || !P4 || !P5 || !P6 || !P7 || !P8)
+            {
+                Cnt ++;
+                if(Cnt > Black_Cnt1)
+                {
+                    Cnt = 0;
+                    Beep_flag = 1;
+                    Led_flag = 1;
+                    flag ++;
+                    Quan_num++;
+                }
+            }
+            else {
+                Cnt = 0;
+            }
+        }
+        else if(flag == 2)
+        {
+            if(P1 && P2 && P3 && P4 && P5 && P6 && P7 && P8)
+            {
+                Cnt ++;
+                if(Cnt > White_CNt1)
+                {
+                    Quan_num ++;
+                    Cnt = 0;
+                    Beep_flag = 1;
+                    Led_flag = 1;
+                    flag --;
+                    if(Quan_num == 4)
+                    {
+                        DL_GPIO_togglePins(LED_PORT, LED_PIN_PIN);
+                        EN_flag  = 0;
+                        Quan_num = 0;
+                        mode = 0;
+                        return 1;
+                    }
+                }
+            }
+            else{
+                Cnt = 0;
+            }
+        }
+        if(Quan_num != 0 && (Quan_num % 2 == 0))
+        {
+            target_yaw = wit_data.yaw;
+        }
+    }
+    return 0;
+}
 void TIMER_1_INST_IRQHandler(void)
 {
     if(DL_TimerA_getPendingInterrupt(TIMER_1_INST)==DL_TIMER_IIDX_ZERO) 
@@ -68,26 +167,64 @@ void TIMER_1_INST_IRQHandler(void)
         //lc_printf("ct1 ct2:%.d,%.d\n",ct1,ct2);
         //lc_printf("%d,%d,%1.f,%d\r\n",ct2,ct1,target_calcu,velocity_pwm);
         //PID_Parser_Process();
-            
+        //Lauch_Task();
+        encoder_update();
+        ct1 = get_encoder_cnt1();
+        ct2 = get_encoder_cnt2();
+        encoder_Rst();
+        cnt1 = (float)ct1/2;
+        cnt2 = (float)ct2/2;
+        measure = cnt1 + cnt2;
     }
 }
+
 void Pid_pro(void)
 {
-    encoder_update();
-    ct1 = get_encoder_cnt1();
-    ct2 = get_encoder_cnt2();
-    encoder_Rst();
-    cnt1 = (float)ct1/2;
-    cnt2 = (float)ct2/2;
-    measure = cnt1 + cnt2;
-    turn_pwm = Turn(wit_data.yaw, target_yaw);//转向环
-    velocity_pwm = (int)velocity_PID_value_new(measure, target_calcu);//速度环
-    set_motor_pwm(velocity_pwm + turn_pwm,velocity_pwm - turn_pwm);
+    int turn_value1 = 0,turn_value2 = 0;
+    int turn_pwm = 0;
+    turn_value2 = Find_line_task();
+    turn_value = (White_flag) ? 0 : turn_value2;
+    target_A = Base_Speed2 - turn_value;
+    target_B = Base_Speed2 + turn_value;
+    if(flag == 1 )
+    {
+        turn_pwm = Turn(wit_data.yaw, target_yaw);
+        velocity_pwm_A = (int)velocity_PID_value_new(measure, Base_Speed1);//速度环
+        velocity_pwm_B = (int)velocity_PID_value_new(measure, Base_Speed1);//速度环
+        set_motor_pwm(velocity_pwm_A + turn_pwm,velocity_pwm_B - turn_pwm);
+    }
+    else if(flag == 2)
+    {
+        velocity_pwm_A = (int)velocity_PID_value_new(measure, target_A);//速度环
+        velocity_pwm_B = (int)velocity_PID_value_new(measure, target_B);//速度环
+        set_motor_pwm(velocity_pwm_A,velocity_pwm_B);
+    }
 }
 void TIMER_Pid_INST_IRQHandler(void)
 {
     if(DL_TimerG_getPendingInterrupt(TIMER_Pid_INST)==DL_TIMER_IIDX_ZERO) 
     {
-        Pid_pro();
+        Stop_flag = Lauch_Task();
+        if(Stop_flag || EN_flag == 0)   set_motor_pwm(0, 0);
+        else if(EN_flag)                Pid_pro();
+    }
+}
+void TIMER_Key_INST_IRQHandler(void)
+{
+
+    if(DL_TimerA_getPendingInterrupt(TIMER_Key_INST)==DL_TIMER_IIDX_ZERO) {
+        key_value = Key_output();
+        if(key_value == 1)
+        {
+            mode = 1;
+            EN_flag = 1;
+        }
+        else if(key_value == 11)
+        {
+            mode = 2;
+            DL_GPIO_setPins(LED_PORT, LED_PIN_PIN);
+            EN_flag = 1;
+            flag = 1;
+        }
     }
 }

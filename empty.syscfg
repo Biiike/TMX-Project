@@ -1,9 +1,9 @@
 /**
  * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
  * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
- * @cliArgs --device "MSPM0G350X" --part "Default" --package "LQFP-64(PM)" --product "mspm0_sdk@2.02.00.05"
- * @v2CliArgs --device "MSPM0G3507" --package "LQFP-64(PM)" --product "mspm0_sdk@2.02.00.05"
- * @versions {"tool":"1.21.1+3772"}
+ * @cliArgs --device "MSPM0G350X" --part "Default" --package "LQFP-64(PM)" --product "mspm0_sdk@2.05.01.01"
+ * @v2CliArgs --device "MSPM0G3507" --package "LQFP-64(PM)" --product "mspm0_sdk@2.05.01.01"
+ * @versions {"tool":"1.24.0+4110"}
  */
 
 /**
@@ -14,6 +14,8 @@ const GPIO   = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const GPIO1  = GPIO.addInstance();
 const GPIO2  = GPIO.addInstance();
 const GPIO3  = GPIO.addInstance();
+const GPIO4  = GPIO.addInstance();
+const GPIO5  = GPIO.addInstance();
 const I2C    = scripting.addModule("/ti/driverlib/I2C", {}, false);
 const I2C1   = I2C.addInstance();
 const PWM    = scripting.addModule("/ti/driverlib/PWM", {}, false);
@@ -124,6 +126,55 @@ GPIO3.associatedPins[7].assignedPort     = "PORTB";
 GPIO3.associatedPins[7].internalResistor = "PULL_UP";
 GPIO3.associatedPins[7].pin.$assign      = "PB16";
 
+GPIO4.$name                              = "FIND";
+GPIO4.associatedPins.create(8);
+GPIO4.associatedPins[0].direction        = "INPUT";
+GPIO4.associatedPins[0].assignedPort     = "PORTB";
+GPIO4.associatedPins[0].assignedPin      = "25";
+GPIO4.associatedPins[0].internalResistor = "PULL_UP";
+GPIO4.associatedPins[0].$name            = "Left_X4";
+GPIO4.associatedPins[1].assignedPort     = "PORTB";
+GPIO4.associatedPins[1].assignedPin      = "24";
+GPIO4.associatedPins[1].direction        = "INPUT";
+GPIO4.associatedPins[1].internalResistor = "PULL_UP";
+GPIO4.associatedPins[1].$name            = "Left_X3";
+GPIO4.associatedPins[2].assignedPort     = "PORTB";
+GPIO4.associatedPins[2].assignedPin      = "20";
+GPIO4.associatedPins[2].direction        = "INPUT";
+GPIO4.associatedPins[2].internalResistor = "PULL_UP";
+GPIO4.associatedPins[2].$name            = "Left_X2";
+GPIO4.associatedPins[3].assignedPort     = "PORTA";
+GPIO4.associatedPins[3].assignedPin      = "14";
+GPIO4.associatedPins[3].direction        = "INPUT";
+GPIO4.associatedPins[3].internalResistor = "PULL_UP";
+GPIO4.associatedPins[3].$name            = "Left_X1";
+GPIO4.associatedPins[4].assignedPort     = "PORTB";
+GPIO4.associatedPins[4].assignedPin      = "18";
+GPIO4.associatedPins[4].direction        = "INPUT";
+GPIO4.associatedPins[4].internalResistor = "PULL_UP";
+GPIO4.associatedPins[4].$name            = "Right_X1";
+GPIO4.associatedPins[5].assignedPort     = "PORTB";
+GPIO4.associatedPins[5].assignedPin      = "19";
+GPIO4.associatedPins[5].direction        = "INPUT";
+GPIO4.associatedPins[5].internalResistor = "PULL_UP";
+GPIO4.associatedPins[5].$name            = "Right_X2";
+GPIO4.associatedPins[6].assignedPort     = "PORTB";
+GPIO4.associatedPins[6].assignedPin      = "10";
+GPIO4.associatedPins[6].direction        = "INPUT";
+GPIO4.associatedPins[6].internalResistor = "PULL_UP";
+GPIO4.associatedPins[6].$name            = "Right_X3";
+GPIO4.associatedPins[7].assignedPort     = "PORTA";
+GPIO4.associatedPins[7].assignedPin      = "07";
+GPIO4.associatedPins[7].direction        = "INPUT";
+GPIO4.associatedPins[7].internalResistor = "PULL_UP";
+GPIO4.associatedPins[7].$name            = "Right_X4";
+
+GPIO5.$name                              = "Beep";
+GPIO5.associatedPins[0].$name            = "Beep_Pin";
+GPIO5.associatedPins[0].assignedPort     = "PORTB";
+GPIO5.associatedPins[0].assignedPin      = "17";
+GPIO5.associatedPins[0].internalResistor = "PULL_DOWN";
+
 I2C1.basicEnableController             = true;
 I2C1.$name                             = "I2C_OLED";
 I2C1.basicControllerStandardBusSpeed   = "Fast";
@@ -177,7 +228,7 @@ TIMER2.timerClkDiv        = 2;
 TIMER2.interrupts         = ["ZERO"];
 TIMER2.timerMode          = "PERIODIC";
 TIMER2.timerStartTimer    = true;
-TIMER2.timerPeriod        = "50ms";
+TIMER2.timerPeriod        = "10ms";
 TIMER2.peripheral.$assign = "TIMG8";
 
 TIMER3.$name            = "TIMER_Gyro";
@@ -233,12 +284,12 @@ UART3.enabledInterrupts                = ["RX_TIMEOUT_ERROR"];
 UART3.enabledDMARXTriggers             = "DL_UART_DMA_INTERRUPT_RX";
 UART3.targetBaudRate                   = 115200;
 UART3.uartClkSrc                       = "MFCLK";
-UART3.peripheral.$assign               = "UART2";
-UART3.peripheral.rxPin.$assign         = "PA22";
 UART3.rxPinConfig.hideOutputInversion  = scripting.forceWrite(false);
 UART3.rxPinConfig.onlyInternalResistor = scripting.forceWrite(false);
 UART3.rxPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
 UART3.rxPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric11";
+UART3.peripheral.$assign               = "UART2";
+UART3.peripheral.rxPin.$assign         = "PA22";
 UART3.DMA_CHANNEL_RX.$name             = "DMA_WIT";
 UART3.DMA_CHANNEL_RX.srcLength         = "BYTE";
 UART3.DMA_CHANNEL_RX.dstLength         = "BYTE";
@@ -261,6 +312,15 @@ GPIO3.associatedPins[2].pin.$suggestSolution       = "PA17";
 GPIO3.associatedPins[3].pin.$suggestSolution       = "PA24";
 GPIO3.associatedPins[4].pin.$suggestSolution       = "PA13";
 GPIO3.associatedPins[5].pin.$suggestSolution       = "PA12";
+GPIO4.associatedPins[0].pin.$suggestSolution       = "PB25";
+GPIO4.associatedPins[1].pin.$suggestSolution       = "PB24";
+GPIO4.associatedPins[2].pin.$suggestSolution       = "PB20";
+GPIO4.associatedPins[3].pin.$suggestSolution       = "PA14";
+GPIO4.associatedPins[4].pin.$suggestSolution       = "PB18";
+GPIO4.associatedPins[5].pin.$suggestSolution       = "PB19";
+GPIO4.associatedPins[6].pin.$suggestSolution       = "PB10";
+GPIO4.associatedPins[7].pin.$suggestSolution       = "PA7";
+GPIO5.associatedPins[0].pin.$suggestSolution       = "PB17";
 PWM1.peripheral.$suggestSolution                   = "TIMA1";
 TIMER3.peripheral.$suggestSolution                 = "TIMG6";
 UART2.peripheral.$suggestSolution                  = "UART3";
