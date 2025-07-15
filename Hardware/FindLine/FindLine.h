@@ -12,4 +12,5 @@
 #define P7  DL_GPIO_readPins(FIND_Right_X3_PORT,FIND_Right_X3_PIN)
 #define P8  DL_GPIO_readPins(FIND_Right_X4_PORT,FIND_Right_X4_PIN)
 int Find_line_task(void);
+int Find_line_task1(void);
 #endif

@@ -9,7 +9,7 @@ void Key_Init()
 
 }
 
- static Key_State key_state[3] = {
+ static Key_State key_state[4] = {
     {
         .key_cnt = 0,
         .key_flag = 0,
@@ -21,12 +21,19 @@ void Key_Init()
         .key_flag = 0,
         .KEY_NUM = 2,
         .KEY_LONG_NUM = 22
+    },
+    {
+        .key_cnt = 0,
+        .key_flag = 0,
+        .KEY_NUM = 3,
+        .KEY_LONG_NUM = 33
     }
  };
  Key_State* key_input(void)
  {
-    if(!KEY1)   return &key_state[0];
+    if(!KEY1)       return &key_state[0];
     else if(!KEY2)  return &key_state[1];
+    else if(!KEY3)  return &key_state[2];
 
     return NULL;
 }
@@ -36,7 +43,7 @@ uint8_t Key_output(void)
     Key_State* keystate = key_input();
     if(keystate == NULL)
     {
-        for(uint8_t i = 0; i < 2; ++i)
+        for(uint8_t i = 0; i < 3; i++)
         {
             if(key_state[i].key_flag == KEY_PRESS)
             {

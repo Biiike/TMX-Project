@@ -19,10 +19,13 @@
 #include "FindLine.h"
 #include "Beep.h"
 
-#define Black_Cnt1    10
-#define White_CNt1    80
-#define Base_Speed1    20    //基础速度
+#define Black_Cnt1    5
+#define Black_Cnt2    2
+#define White_CNt1    85
+#define White_CNt2    50
+#define Base_Speed1    18    //基础速度
 #define Base_Speed2    10    //基础速度
+#define ZERO_Angle_Time     200     
 uint16_t dis = 0;
 int ct1,ct2;
 float cnt1,cnt2;
@@ -31,7 +34,8 @@ uint8_t key_value = 0;
 float target_calcu = 0;//默认前进速度
 float target_A = 0;
 float target_B = 0;
-float target_yaw = 0;//默认角度
+float target_yaw = -2;//默认角度
+float target_angle = 0;
 uint8_t Find_flag = 0;
 uint8_t Quan_num = 0;
 int turn_value = 0;
@@ -45,6 +49,8 @@ uint8_t STOP;
 uint8_t EN_flag = 0;
 uint8_t White_flag = 0;
 uint8_t flag = 0;
+uint16_t Num = 0;
+uint16_t Q_num = 0;
 int main(void)
 {
     SYSCFG_DL_init();
@@ -68,7 +74,7 @@ int main(void)
 
     while (1) 
     {  
-        SHOW_Firstpage (Quan_num, wit_data.pitch, wit_data.roll, wit_data.yaw);
+        SHOW_Fourpage();
     }
 }
 float my_abs(float yaw)
@@ -150,7 +156,79 @@ uint8_t Lauch_Task(void)
         }
         if(Quan_num != 0 && (Quan_num % 2 == 0))
         {
-            target_yaw = wit_data.yaw;
+            if(wit_data.yaw <  0) target_yaw = 180 - my_abs(wit_data.yaw);
+            else target_yaw = wit_data.yaw - 180;
+        }
+    }
+    else if(mode == 3)
+    {
+        if(flag == 2)
+        {
+            if(P1 && P2 && P3 && P4 && P5 && P6 && P7 && P8)
+            {
+                Cnt ++;
+                if(Cnt > White_CNt2)
+                {
+                    Quan_num ++;
+                    if(Quan_num == 5)
+                    {
+                        EN_flag = 0;
+                        Quan_num = 0;
+                        mode = 0;
+                        return 1;
+                    }
+                    Cnt = 0;
+                    Beep_flag = 1;
+                    Led_flag = 1;
+                    flag --;
+                    if(Quan_num == 1)  target_yaw = -50;
+                    else if(Quan_num == 3)target_angle = 55;
+                }
+            }
+            else{
+                Cnt = 0;
+            }
+        }
+        if((Quan_num != 0) && (Quan_num  == 3))
+        {
+            if(wit_data.yaw <  0) target_yaw = 180 - my_abs(wit_data.yaw);
+            else target_yaw = wit_data.yaw - 180;
+        }
+        if(flag == 1)
+        {
+            Num ++;
+            if(Num > ZERO_Angle_Time)
+            {
+                if(Quan_num == 1)
+                {
+                    target_yaw = 0;
+                    Num = 0;
+                }
+            }
+            if(Quan_num == 3)
+            {
+                Q_num ++;
+                if(Q_num > ZERO_Angle_Time)
+                {
+                    Q_num = 0;
+                    target_angle = 0;
+                }
+            }
+            if(!P1 || !P2 || !P3 || !P4 || !P5 || !P6 || !P7 || !P8)
+            {
+                Cnt ++;
+                if(Cnt > Black_Cnt2)
+                {
+                    Quan_num ++;
+                    Cnt = 0;
+                    Beep_flag = 1;
+                    Led_flag = 1;
+                    flag ++;
+                }
+            }
+            else{
+                Cnt = 0;
+            }
         }
     }
     return 0;
@@ -182,19 +260,23 @@ void Pid_pro(void)
 {
     int turn_value1 = 0,turn_value2 = 0;
     int turn_pwm = 0;
-    turn_value2 = Find_line_task();
-    turn_value = (White_flag) ? 0 : turn_value2;
-    target_A = Base_Speed2 - turn_value;
-    target_B = Base_Speed2 + turn_value;
-    if(flag == 1 )
+    if(flag == 1)
     {
-        turn_pwm = Turn(wit_data.yaw, target_yaw);
+        if(Quan_num != 0 && (Quan_num % 2 == 0) && mode == 2)turn_pwm = Turn(target_yaw, -2);
+        else if(Quan_num != 0 && (Quan_num  == 3) && mode == 3)turn_pwm = Turn(target_yaw, target_angle);
+        else turn_pwm = Turn(wit_data.yaw, target_yaw);
         velocity_pwm_A = (int)velocity_PID_value_new(measure, Base_Speed1);//速度环
         velocity_pwm_B = (int)velocity_PID_value_new(measure, Base_Speed1);//速度环
         set_motor_pwm(velocity_pwm_A + turn_pwm,velocity_pwm_B - turn_pwm);
     }
     else if(flag == 2)
     {
+        if(mode == 3)
+            turn_value2 = Find_line_task1();
+        else 
+            turn_value2 = Find_line_task();
+        target_A = Base_Speed2 - turn_value2;
+        target_B = Base_Speed2 + turn_value2;
         velocity_pwm_A = (int)velocity_PID_value_new(measure, target_A);//速度环
         velocity_pwm_B = (int)velocity_PID_value_new(measure, target_B);//速度环
         set_motor_pwm(velocity_pwm_A,velocity_pwm_B);
@@ -222,9 +304,14 @@ void TIMER_Key_INST_IRQHandler(void)
         else if(key_value == 11)
         {
             mode = 2;
-            DL_GPIO_setPins(LED_PORT, LED_PIN_PIN);
             EN_flag = 1;
             flag = 1;
+        }
+        else if(key_value == 2)
+        {
+            mode = 3;
+            EN_flag = 1;
+            flag = 2;
         }
     }
 }

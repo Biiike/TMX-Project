@@ -2,9 +2,9 @@
 #define __KEY_H__
 #include "Hardware\Board\board.h"
 
-#define KEY1    DL_GPIO_readPins(KEY_PORT,KEY_KEY_1_PIN)
-#define KEY2    DL_GPIO_readPins(KEY_PORT,KEY_KEY_2_PIN)
-
+#define KEY1    DL_GPIO_readPins(KEY_KEY_1_PORT,KEY_KEY_1_PIN)
+#define KEY2    DL_GPIO_readPins(KEY_KEY_2_PORT,KEY_KEY_2_PIN)
+#define KEY3    DL_GPIO_readPins(KEY_KEY_3_PORT,KEY_KEY_3_PIN)
 #define Key_Disp_Time    200
 #define Key_Long_Time   1000
 #define KEY_NONE   0
